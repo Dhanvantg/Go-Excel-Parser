@@ -2,12 +2,14 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/xuri/excelize/v2"
 )
 
 func main() {
-	f, err := excelize.OpenFile("gradebook.xlsx")
+	args := os.Args[1:]
+	f, err := excelize.OpenFile(args[0])
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -32,6 +34,9 @@ func main() {
 		return
 	}
 	for _, row := range rows {
+		if len(row) == 0 {
+			continue
+		}
 		for _, colCell := range row {
 			fmt.Print(colCell, "\t")
 		}
