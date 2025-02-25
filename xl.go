@@ -7,6 +7,7 @@ import (
 	"math"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/xuri/excelize/v2"
 )
@@ -65,6 +66,7 @@ func main() {
 	branch := ""
 	emplid := ""
 	headers := rows[0]
+	classIDs := strings.Split(*classFlag, ",")
 
 	// Report Variables
 	total_avs := map[string]float64{}
@@ -78,7 +80,18 @@ func main() {
 		}
 		sum := 0.00
 		emplid = row[2]
-		if *classFlag != "" && row[1] != *classFlag {
+		valid := false
+		if *classFlag == "" {
+			valid = true
+		} else {
+			for _, classID := range classIDs {
+				if classID != "" && row[1] == classID {
+					valid = true
+					break
+				}
+			}
+		}
+		if !valid {
 			continue
 		}
 		for rowNo, colCell := range row {
@@ -127,6 +140,7 @@ func main() {
 		fmt.Println("No data found, please check the flags")
 		return
 	}
+	fmt.Println("Parsed", count, "rows")
 	fmt.Println("Averages:")
 	fmt.Println("Total: ", total/float64(count))
 	total_avs["Total"] = total / float64(count)
